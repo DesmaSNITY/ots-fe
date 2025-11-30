@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://api.praktikum.web.id/api";
+const API_BASE_URL = "https://{BASE_URL}/api";
 
 async function request(endpoint, options = {}) {
   const config = {
