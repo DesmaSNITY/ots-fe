@@ -1,4 +1,6 @@
-const API_BASE_URL = "https://{BASE_URL}/api";
+
+
+const API_BASE_URL = `${import.meta.env.VITE_ENDPOINT}/api`;
 
 async function request(endpoint, options = {}) {
   const config = {
@@ -11,7 +13,14 @@ async function request(endpoint, options = {}) {
   const res = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
   if (!res.ok) {
-    let msg = await res.text();
+    let msg = "Unknown error";
+    const contentType = res.headers.get("content-type");
+      
+    if (contentType && contentType.includes("application/json")) {
+      const json = await res.json();
+      msg = json.message || JSON.stringify(json);
+    }
+
     throw new Error(`API Error: ${msg}`);
   }
 
