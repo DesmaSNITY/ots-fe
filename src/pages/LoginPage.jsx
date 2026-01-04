@@ -1,5 +1,5 @@
 import { useState } from "react";
-import FormFieldset from "../component/FormFieldSet.jsx";
+import FormFieldset from "../components/FormFieldSet.jsx";
 import { useNavigate } from "react-router-dom"; 
 import { api } from "../services/api";
 
@@ -17,6 +17,7 @@ export default function LoginPage() {
     
     try {
         const res = await api.postLogin(form);
+        localStorage.setItem("adminToken", res.token);
         // success → redirect
         navigate("/dashboard");
     } catch (err) {

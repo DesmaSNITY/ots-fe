@@ -1,5 +1,5 @@
 import { useState } from "react";
-import FormFieldset from "../component/FormFieldSet.jsx";
+import FormFieldset from "../components/FormFieldSet.jsx";
 import { api } from "../services/api";
 import { useNavigate } from "react-router-dom"; 
 
