@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, User, FileCode, Calendar } from 'lucide-react';
+import { ChevronDown, ChevronUp, User, FileCode, Calendar, Trash2 } from 'lucide-react';
 
-export default function SubmissionCard({ submission }) {
+export default function SubmissionCard({ submission, onDeleteClick }) {
   const [expanded, setExpanded] = useState(false);
 
   if (!submission) return null;
@@ -53,13 +53,22 @@ export default function SubmissionCard({ submission }) {
             </div>
           </div>
           
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="ml-4 p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
-            aria-label={expanded ? "Collapse details" : "Expand details"}
-          >
-            {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-          </button>
+          <div className="flex items-center gap-2 ml-4">
+            <button
+              onClick={() => onDeleteClick(submission.id)}
+              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              title="Delete submission"
+            >
+              <Trash2 size={18} />
+            </button>
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+              aria-label={expanded ? "Collapse details" : "Expand details"}
+            >
+              {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </button>
+          </div>
         </div>
 
         {expanded && (

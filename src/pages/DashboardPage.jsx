@@ -1,12 +1,10 @@
-// ============================================
-// FILE: src/pages/DashboardPage.jsx
-// ============================================
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import NavigationTabs from '../components/dashboard/NavigationTabs';
 import ErrorAlert from '../components/dashboard/ErrorAlert';
 import Modal from '../components/dashboard/Modal';
+import ConfirmDialog from '../components/dashboard/ConfirmDialog';
 import QuestionsTab from '../components/dashboard/questions/QuestionsTab';
 import CreateQuestionModal from '../components/dashboard/questions/CreateQuestionModal';
 import EditQuestionModal from '../components/dashboard/questions/EditQuestionModal';
@@ -24,6 +22,15 @@ export default function DashboardPage() {
   const [error, setError] = useState('');
   const [token, setToken] = useState('');
   const [selectedQuestion, setSelectedQuestion] = useState(null);
+  
+  // Confirm dialog state
+  const [confirmDialog, setConfirmDialog] = useState({
+    show: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+    type: 'danger'
+  });
   
   const [newQuestion, setNewQuestion] = useState({
     title: '',
@@ -77,15 +84,12 @@ export default function DashboardPage() {
     }
   };
 
-  // Rules don't need fetching, we just need to update them
-
   useEffect(() => {
     if (activeTab === 'questions') {
       fetchQuestions();
     } else if (activeTab === 'answers') {
       fetchSubmissions();
     }
-    // Rules tab doesn't need fetching
   }, [activeTab, token]);
 
   const handleCreateQuestion = async () => {
@@ -149,26 +153,64 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDeleteQuestion = async (id) => {
+  const handleDeleteQuestion = (id) => {
     if (!token) {
       setError('Please enter your Bearer token first');
       return;
     }
 
-    if (!confirm('Are you sure you want to delete this question?')) return;
+    const question = questions.find(q => q.id === id);
+    setConfirmDialog({
+      show: true,
+      title: 'Delete Question',
+      message: `Are you sure you want to delete "${question?.title || 'this question'}"? This action cannot be undone.`,
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmDialog({ ...confirmDialog, show: false });
+        setLoading(true);
+        setError('');
 
-    setLoading(true);
-    setError('');
+        try {
+          await api.deleteQuestion(id, token);
+          setQuestions(questions.filter(q => q.id !== id));
+          setError('');
+        } catch (err) {
+          setError(`Failed to delete question: ${err.message}`);
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
+  };
 
-    try {
-      await api.deleteQuestion(id, token);
-      setQuestions(questions.filter(q => q.id !== id));
-      setError('');
-    } catch (err) {
-      setError(`Failed to delete question: ${err.message}`);
-    } finally {
-      setLoading(false);
+  const handleDeleteSubmission = (id) => {
+    if (!token) {
+      setError('Please enter your Bearer token first');
+      return;
     }
+
+    const submission = submissions.find(s => s.id === id);
+    setConfirmDialog({
+      show: true,
+      title: 'Delete Submission',
+      message: `Are you sure you want to delete submission from ${submission?.user?.name || 'this user'}? This action cannot be undone.`,
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmDialog({ ...confirmDialog, show: false });
+        setLoading(true);
+        setError('');
+
+        try {
+          await api.deleteSubmission(id, token);
+          setSubmissions(submissions.filter(s => s.id !== id));
+          setError('');
+        } catch (err) {
+          setError(`Failed to delete submission: ${err.message}`);
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
   };
 
   const openEditModal = (question) => {
@@ -199,11 +241,10 @@ export default function DashboardPage() {
       if (data.rule) {
         setRules(data.rule);
         setError('');
-        // Show success message - will be handled by RulesTab component
       }
     } catch (err) {
       setError(`Failed to update rules: ${err.message}`);
-      throw err; // Re-throw so RulesTab can show error alert
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -243,7 +284,11 @@ export default function DashboardPage() {
         )}
 
         {activeTab === 'answers' && (
-          <AnswersTab submissions={submissions} loading={loading} />
+          <AnswersTab 
+            submissions={submissions} 
+            loading={loading}
+            onDeleteClick={handleDeleteSubmission}
+          />
         )}
 
         {activeTab === 'rules' && (
@@ -255,6 +300,7 @@ export default function DashboardPage() {
         )}
       </div>
 
+      {/* Modal for Create/Edit */}
       <Modal
         show={showModal}
         title={modalType === 'create' ? 'Create New Question' : 'Edit Question'}
@@ -280,6 +326,16 @@ export default function DashboardPage() {
           />
         )}
       </Modal>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        show={confirmDialog.show}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        type={confirmDialog.type}
+        onConfirm={confirmDialog.onConfirm}
+        onCancel={() => setConfirmDialog({ ...confirmDialog, show: false })}
+      />
     </div>
   );
 }

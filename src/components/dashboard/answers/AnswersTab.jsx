@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SubmissionCard from './SubmissionCard';
 
-export default function AnswersTab({ submissions, loading }) {
+export default function AnswersTab({ submissions, loading, onDeleteClick }) {
   const [filter, setFilter] = useState('all');
 
   const filteredSubmissions = submissions.filter(sub => {
@@ -62,7 +62,11 @@ export default function AnswersTab({ submissions, loading }) {
       ) : (
         <div className="space-y-4">
           {filteredSubmissions.map((submission) => (
-            <SubmissionCard key={submission.id} submission={submission} />
+            <SubmissionCard 
+              key={submission.id} 
+              submission={submission}
+              onDeleteClick={onDeleteClick}
+            />
           ))}
         </div>
       )}

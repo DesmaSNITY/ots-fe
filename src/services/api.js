@@ -141,6 +141,19 @@ export const api = {
       } : {}
     });
   },
+
+  deleteSubmission(id, token) {
+    const formData = new FormData();
+    // formData.append('_method', 'DELETE');
+    
+    return request(`/submiting/${id}`, {
+      method: "POST",
+      body: formData,
+      headers: token ? {
+        Authorization: `Bearer ${token}`
+      } : {}
+    });
+  },
   
   // ==================== RULES ====================
   
