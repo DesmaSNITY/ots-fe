@@ -1,7 +1,3 @@
-// ============================================
-// FILE: src/services/api.js
-// ============================================
-
 const API_BASE_URL = `${import.meta.env.VITE_ENDPOINT}/api`;
 
 async function request(endpoint, options = {}) {
@@ -66,6 +62,17 @@ export const api = {
       headers: {
         Authorization: `Bearer ${token}`
       }
+    });
+  },
+
+
+  // POST /logout
+  postLogout(token) {
+    return request("/logout", {
+      method: "POST",
+      headers: token ? {
+        Authorization: `Bearer ${token}`
+      } : {}
     });
   },
   

@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import Alert from '../Alert';
+import { Sparkles, Save, X } from 'lucide-react';
 
 export default function CreateQuestionModal({ 
   newQuestion, 
@@ -81,7 +82,7 @@ export default function CreateQuestionModal({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {alert.show && (
         <Alert 
           type={alert.type} 
@@ -90,45 +91,49 @@ export default function CreateQuestionModal({
         />
       )}
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm font-bold text-gray-900">
+          <Sparkles size={16} className="text-blue-500" />
           Title <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
           value={newQuestion.title}
           onChange={(e) => setNewQuestion({ ...newQuestion, title: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300"
           placeholder="e.g., Pemrograman Dasar - Soal 1"
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm font-bold text-gray-900">
+          <Sparkles size={16} className="text-indigo-500" />
           Description <span className="text-red-500">*</span>
         </label>
         <textarea
           value={newQuestion.description}
           onChange={(e) => setNewQuestion({ ...newQuestion, description: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300 resize-none"
           rows="3"
           placeholder="Brief description of the question topic"
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm font-bold text-gray-900">
+          <Sparkles size={16} className="text-purple-500" />
           Question <span className="text-red-500">*</span>
         </label>
         <div 
           ref={quillRef} 
-          className="bg-white border border-gray-300 rounded-lg"
+          className="bg-white border-2 border-gray-200 rounded-xl hover:border-blue-300 transition-all duration-300 quill-custom"
           style={{ minHeight: '200px' }}
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm font-bold text-gray-900">
+          <Sparkles size={16} className="text-green-500" />
           Answer Key <span className="text-red-500">*</span>
         </label>
         <input
@@ -139,30 +144,70 @@ export default function CreateQuestionModal({
             setNewQuestion({ ...newQuestion, key: value });
           }}
           maxLength="10"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300 font-mono text-lg tracking-wider"
           placeholder="1234567890"
         />
-        <p className="mt-1 text-xs text-gray-500">
-          Must be exactly 10 digits. Current: {newQuestion.key?.length || 0}/10
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-gray-500">
+            Must be exactly 10 digits
+          </p>
+          <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+            newQuestion.key?.length === 10 
+              ? 'bg-green-100 text-green-700' 
+              : 'bg-gray-100 text-gray-600'
+          }`}>
+            {newQuestion.key?.length || 0}/10
+          </span>
+        </div>
       </div>
 
-      <div className="flex gap-3 pt-4 border-t">
+      <div className="flex gap-3 pt-6 border-t-2 border-gray-100">
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+          className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl
+                   hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-blue-500/30 
+                   hover:shadow-blue-500/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed 
+                   disabled:hover:scale-100 font-bold"
         >
-          {loading ? 'Creating...' : 'Create Question'}
+          {loading ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Creating...
+            </>
+          ) : (
+            <>
+              <Save size={18} />
+              Create Question
+            </>
+          )}
         </button>
         <button
           onClick={onClose}
           disabled={loading}
-          className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 font-medium"
+          className="px-6 py-3.5 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 
+                   transition-all duration-300 disabled:opacity-50 font-bold hover:scale-[1.02] active:scale-[0.98]"
         >
+          <X size={18} className="inline mr-2" />
           Cancel
         </button>
       </div>
+
+      <style jsx>{`
+        .quill-custom :global(.ql-toolbar) {
+          border-top-left-radius: 0.75rem;
+          border-top-right-radius: 0.75rem;
+          border: none;
+          background: linear-gradient(to right, #f9fafb, #f3f4f6);
+        }
+        
+        .quill-custom :global(.ql-container) {
+          border-bottom-left-radius: 0.75rem;
+          border-bottom-right-radius: 0.75rem;
+          border: none;
+          font-size: 14px;
+        }
+      `}</style>
     </div>
   );
 }
