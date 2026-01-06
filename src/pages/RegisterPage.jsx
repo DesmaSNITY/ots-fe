@@ -87,17 +87,30 @@ export default function RegisterPage() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2 transition-colors group-focus-within:text-purple-600">
                                     Kelompok
                                 </label>
-                                <input
-                                    type="text"
+                                <select
                                     name="kelompok"
                                     value={form.kelompok}
                                     onChange={(e) => setForm({ ...form, kelompok: e.target.value })}
-                                    placeholder="P1"
-                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 
+                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 
                                              focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 
-                                             transition-all duration-300 hover:border-purple-300 shadow-sm"
+                                             transition-all duration-300 hover:border-purple-300 shadow-sm cursor-pointer
+                                             appearance-none bg-no-repeat bg-right pr-10"
+                                    style={{
+                                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                        backgroundSize: '1.5rem',
+                                        backgroundPosition: 'right 0.75rem center'
+                                    }}
                                     required
-                                />
+                                >
+                                    <option value="" disabled>Select Kelompok</option>
+                                    {[...Array(10)].map((_, i) => (
+                                        <option key={`P${i + 1}`} value={`P${i + 1}`}>
+                                            P{i + 1}
+                                        </option>
+                                    ))}
+                                    <option value="M1">M1</option>
+                                    <option value="M2">M2</option>
+                                </select>
                             </div>
 
                             {/* NIM Field */}

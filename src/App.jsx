@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import DashBoard from "./pages/DashBoardPage";
+import DashBoard from "./pages/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
