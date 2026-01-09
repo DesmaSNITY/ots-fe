@@ -74,15 +74,34 @@ export default function DashboardPage() {
     }
   };
 
-  // Rules don't need fetching, we just need to update them
+  const fetchRules = async () => {
+    if (!token) {
+      setError('Please enter your Bearer token to access rules');
+      setRules(null);
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    try {
+      const data = await api.getRules(token);
+      setRules(data.rule || null);
+    } catch (err) {
+      setError(`Failed to fetch rules: ${err.message}`);
+      setRules(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (activeTab === 'questions') {
       fetchQuestions();
     } else if (activeTab === 'answers') {
       fetchSubmissions();
+    } else if (activeTab === 'rules') {
+      fetchRules();
     }
-    // Rules tab doesn't need fetching
   }, [activeTab, token]);
 
   const handleCreateQuestion = async () => {
@@ -206,7 +225,7 @@ export default function DashboardPage() {
   const handleUpdateRules = async (newData) => {
     if (!token) {
       setError('Please enter your Bearer token first');
-      return;
+      throw new Error('Please enter your Bearer token first');
     }
 
     setLoading(true);
@@ -218,7 +237,6 @@ export default function DashboardPage() {
       if (data.rule) {
         setRules(data.rule);
         setError('');
-        // Show success message - will be handled by RulesTab component
       }
     } catch (err) {
       setError(`Failed to update rules: ${err.message}`);

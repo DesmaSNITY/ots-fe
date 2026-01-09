@@ -166,7 +166,7 @@ export const api = {
   
   // GET /rules - Get rules/SOP
   getRules(token) {
-    return request("/rules", {
+    return request("/rule", {
       method: "GET",
       headers: token ? {
         Authorization: `Bearer ${token}`,
@@ -185,7 +185,7 @@ export const api = {
     
     console.log('API putUpdateRules called with:', { data, token });
     
-    return request("/rules", {
+    return request("/rule", {
       method: "POST",
       body: formData,
       headers: token ? {

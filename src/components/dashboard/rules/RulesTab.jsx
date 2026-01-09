@@ -9,6 +9,7 @@ export default function RulesTab({ rules, loading, onUpdate }) {
   const [editedData, setEditedData] = useState('');
   const [previewMode, setPreviewMode] = useState(true);
   const [alert, setAlert] = useState({ show: false, type: 'error', message: '' });
+  const [isSaving, setIsSaving] = useState(false);
   
   const quillRef = useRef(null);
   const editorRef = useRef(null);
@@ -18,8 +19,11 @@ export default function RulesTab({ rules, loading, onUpdate }) {
   useEffect(() => {
     if (rules?.data) {
       setEditedData(rules.data);
+    } else if (!rules && !loading) {
+      // Set default content if no rules exist
+      setEditedData(defaultContent);
     }
-  }, [rules]);
+  }, [rules, loading]);
 
   // Initialize Quill when entering edit mode
   useEffect(() => {
@@ -102,6 +106,8 @@ export default function RulesTab({ rules, loading, onUpdate }) {
       return;
     }
 
+    setIsSaving(true);
+    
     try {
       console.log('Sending data to API:', editedData);
       await onUpdate(editedData);
@@ -111,6 +117,8 @@ export default function RulesTab({ rules, loading, onUpdate }) {
     } catch (error) {
       console.error('Update error:', error);
       showAlert('error', `Failed to update rules: ${error.message}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -203,15 +211,15 @@ export default function RulesTab({ rules, loading, onUpdate }) {
             <div className="flex gap-3 mt-6 pt-6 border-t">
               <button
                 onClick={handleSave}
-                disabled={loading}
+                disabled={isSaving}
                 className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
                 <Save size={18} />
-                {loading ? 'Saving...' : 'Save Changes'}
+                {isSaving ? 'Saving...' : 'Save Changes'}
               </button>
               <button
                 onClick={handleCancel}
-                disabled={loading}
+                disabled={isSaving}
                 className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 font-medium"
               >
                 Cancel

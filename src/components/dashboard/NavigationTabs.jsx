@@ -5,7 +5,7 @@ export default function NavigationTabs({ activeTab, setActiveTab }) {
   const tabs = [
     { id: 'questions', label: 'Questions', icon: BookOpen, gradient: 'from-blue-500 to-indigo-600' },
     { id: 'answers', label: 'Submissions', icon: ClipboardCheck, gradient: 'from-green-500 to-emerald-600' },
-    // { id: 'rules', label: 'Rules/SOP', icon: FileText, gradient: 'from-purple-500 to-pink-600' }
+    { id: 'rules', label: 'Rules/SOP', icon: FileText, gradient: 'from-purple-500 to-pink-600' }
   ];
   
   return (
