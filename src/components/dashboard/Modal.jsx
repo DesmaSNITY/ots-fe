@@ -43,7 +43,7 @@ export default function Modal({ show, title, onClose, children }) {
             </div>
             
             {/* Body */}
-            <div className="max-h-[calc(100vh-250px)] overflow-y-auto custom-scrollbar pr-2">
+            <div className="max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar px-2  ">
               {children}
             </div>
           </div>

@@ -9,12 +9,14 @@ import CreateQuestionModal from '../components/dashboard/questions/CreateQuestio
 import EditQuestionModal from '../components/dashboard/questions/EditQuestionModal';
 import AnswersTab from '../components/dashboard/answers/AnswersTab';
 import RulesTab from '../components/dashboard/rules/RulesTab';
+import FeedbackTab from '../components/dashboard/feedback/FeedbackTab';
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('questions');
   const [questions, setQuestions] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [rules, setRules] = useState(null);
+  const [feedback, setFeedback] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [loading, setLoading] = useState(false);
@@ -94,6 +96,28 @@ export default function DashboardPage() {
     }
   };
 
+  const fetchFeedback = async () => {
+    if (!token) {
+      setError('Please enter your Bearer token to access feedback');
+      setFeedback([]);
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    try {
+      // API endpoint not ready yet, will work when GET /feedback is available
+      const data = await api.getFeedback(token);
+      setFeedback(data.feedback || data.feedbacks || []);
+    } catch (err) {
+      // For now, show empty state when API is not ready
+      console.log('Feedback API not ready yet:', err.message);
+      setFeedback([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (activeTab === 'questions') {
       fetchQuestions();
@@ -101,6 +125,8 @@ export default function DashboardPage() {
       fetchSubmissions();
     } else if (activeTab === 'rules') {
       fetchRules();
+    } else if (activeTab === 'feedback') {
+      fetchFeedback();
     }
   }, [activeTab, token]);
 
@@ -246,6 +272,17 @@ export default function DashboardPage() {
     }
   };
 
+  const handleCreateFeedback = async (newFeedback) => {
+    if (!token) {
+      setError('Please enter your Bearer token first');
+      return;
+    }
+
+    // Add the new feedback to the state
+    setFeedback([newFeedback, ...feedback]);
+    setError('');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
       <DashboardHeader token={token} setToken={setToken} />
@@ -292,6 +329,14 @@ export default function DashboardPage() {
             rules={rules} 
             loading={loading} 
             onUpdate={handleUpdateRules}
+          />
+        )}
+
+        {activeTab === 'feedback' && (
+          <FeedbackTab 
+            feedback={feedback} 
+            loading={loading} 
+            onCreateClick={handleCreateFeedback}
           />
         )}
       </div>

@@ -55,17 +55,6 @@ export const api = {
     });
   },
   
-  // GET /user (requires Bearer token)
-  getUser(token) {
-    return request("/user", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-  },
-
-
   // POST /logout
   postLogout(token) {
     return request("/logout", {
@@ -73,6 +62,16 @@ export const api = {
       headers: token ? {
         Authorization: `Bearer ${token}`
       } : {}
+    });
+  },
+  
+  // GET /user (requires Bearer token)
+  getUser(token) {
+    return request("/user", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
   },
   
@@ -148,10 +147,11 @@ export const api = {
       } : {}
     });
   },
-
+  
+  // DELETE /submiting/:id - Soft delete submission (form-data with _METHOD, requires auth)
   deleteSubmission(id, token) {
     const formData = new FormData();
-    // formData.append('_method', 'DELETE');
+    //formData.append('_method', 'DELETE');
     
     return request(`/submiting/${id}`, {
       method: "POST",
@@ -188,6 +188,35 @@ export const api = {
     return request("/rule", {
       method: "POST",
       body: formData,
+      headers: token ? {
+        Authorization: `Bearer ${token}`,
+        'Accept': 'application/json'
+      } : {
+        'Accept': 'application/json'
+      }
+    });
+  },
+  
+  // ==================== FEEDBACK ====================
+  
+  // GET /feedback - Get all feedback (will be ready later)
+  getFeedback(token) {
+    return request("/feedback/title", {
+      method: "GET",
+      headers: token ? {
+        Authorization: `Bearer ${token}`,
+        'Accept': 'application/json'
+      } : {
+        'Accept': 'application/json'
+      }
+    });
+  },
+  
+  // POST /feedback - Create new feedback (form-data)
+  postCreateFeedback(data, token) {
+    return request("/feedback", {
+      method: "POST",
+      body: toFormData(data),
       headers: token ? {
         Authorization: `Bearer ${token}`,
         'Accept': 'application/json'
