@@ -1,7 +1,7 @@
 import React from 'react';
-import { Star, StarOff, Calendar } from 'lucide-react';
+import { Star, StarOff, Calendar, Eye } from 'lucide-react';
 
-export default function FeedbackCard({ feedback }) {
+export default function FeedbackCard({ feedback, onViewResponses }) {
   return (
     <div className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
       <div className="flex items-start justify-between mb-3">
@@ -32,8 +32,15 @@ export default function FeedbackCard({ feedback }) {
             <span>{new Date(feedback.created_at).toLocaleDateString()}</span>
           </div>
         )}
+
+        <button
+          onClick={() => onViewResponses(feedback)}
+          className="w-full mt-3 flex items-center justify-center gap-2 px-3 py-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors text-sm font-medium"
+        >
+          <Eye size={16} />
+          View Responses
+        </button>
       </div>
     </div>
   );
 }
-

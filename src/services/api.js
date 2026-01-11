@@ -224,5 +224,17 @@ export const api = {
         'Accept': 'application/json'
       }
     });
+  },
+
+  getFeedbackResponses(data, token) {
+    return request(`/feedback/response/title/${data}`, {
+      method: "GET",
+      headers: token ? {
+        Authorization: `Bearer ${token}`,
+        'Accept': 'application/json'
+      } : {
+        'Accept': 'application/json'
+      }
+    });
   }
 };

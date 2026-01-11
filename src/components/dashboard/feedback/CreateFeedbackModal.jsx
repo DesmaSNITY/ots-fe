@@ -28,7 +28,6 @@ export default function CreateFeedbackModal({ onClose, onCreate }) {
 
     try {
       const token = localStorage.getItem('adminToken');
-      console.log("test api",token)
       if (!token) {
         showAlert('error', 'Please login first.');
         return;
@@ -39,7 +38,7 @@ export default function CreateFeedbackModal({ onClose, onCreate }) {
         title: formData.title,
         is_rating: formData.is_rating ? 'true' : 'false'
       };
-      
+
       const response = await api.postCreateFeedback(apiData, token);
 
       if (response.feedback) {

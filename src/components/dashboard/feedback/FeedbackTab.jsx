@@ -2,10 +2,18 @@ import React, { useState } from 'react';
 import { Plus, Star } from 'lucide-react';
 import FeedbackCard from './FeedbackCard';
 import CreateFeedbackModal from './CreateFeedbackModal';
+import FeedbackResponsesModal from './FeedbackResponsesModal';
 import Modal from '../Modal';
 
 export default function FeedbackTab({ feedback, loading, onCreateClick }) {
-  const [showModal, setShowModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showResponsesModal, setShowResponsesModal] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
+
+  const handleViewResponses = (feedbackItem) => {
+    setSelectedFeedback(feedbackItem);
+    setShowResponsesModal(true);
+  };
 
   return (
     <div>
@@ -15,7 +23,7 @@ export default function FeedbackTab({ feedback, loading, onCreateClick }) {
           <p className="text-sm text-gray-500 mt-1">View and manage user feedback</p>
         </div>
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => setShowCreateModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
         >
           <Plus size={18} />
@@ -38,27 +46,45 @@ export default function FeedbackTab({ feedback, loading, onCreateClick }) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {feedback.map((item) => (
-            <FeedbackCard key={item.id} feedback={item} />
+            <FeedbackCard 
+              key={item.id} 
+              feedback={item}
+              onViewResponses={handleViewResponses}
+            />
           ))}
         </div>
       )}
 
       <Modal
-        show={showModal}
+        show={showCreateModal}
         title="Create Feedback"
-        onClose={() => setShowModal(false)}
+        onClose={() => setShowCreateModal(false)}
       >
         <CreateFeedbackModal
-          onClose={() => setShowModal(false)}
+          onClose={() => setShowCreateModal(false)}
           onCreate={(data) => {
             onCreateClick(data);
-            setShowModal(false);
+            setShowCreateModal(false);
+          }}
+        />
+      </Modal>
+
+      <Modal
+        show={showResponsesModal}
+        title={`Responses: ${selectedFeedback?.title || ''}`}
+        onClose={() => {
+          setShowResponsesModal(false);
+          setSelectedFeedback(null);
+        }}
+      >
+        <FeedbackResponsesModal
+          feedbackId={selectedFeedback?.id}
+          onClose={() => {
+            setShowResponsesModal(false);
+            setSelectedFeedback(null);
           }}
         />
       </Modal>
     </div>
   );
 }
-
-
-

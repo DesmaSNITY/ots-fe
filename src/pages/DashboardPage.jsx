@@ -106,12 +106,10 @@ export default function DashboardPage() {
     setLoading(true);
     setError('');
     try {
-      // API endpoint not ready yet, will work when GET /feedback is available
       const data = await api.getFeedback(token);
-      setFeedback(data.feedback || data.feedbacks || []);
+      setFeedback(data.feedback || []);
     } catch (err) {
-      // For now, show empty state when API is not ready
-      console.log('Feedback API not ready yet:', err.message);
+      setError(`Failed to fetch feedback: ${err.message}`);
       setFeedback([]);
     } finally {
       setLoading(false);
@@ -266,21 +264,17 @@ export default function DashboardPage() {
       }
     } catch (err) {
       setError(`Failed to update rules: ${err.message}`);
-      throw err; // Re-throw so RulesTab can show error alert
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateFeedback = async (newFeedback) => {
-    if (!token) {
-      setError('Please enter your Bearer token first');
-      return;
+  const handleCreateFeedback = (feedbackData) => {
+    setFeedback([feedbackData, ...feedback]);
+    if (token) {
+      fetchFeedback();
     }
-
-    // Add the new feedback to the state
-    setFeedback([newFeedback, ...feedback]);
-    setError('');
   };
 
   return (
